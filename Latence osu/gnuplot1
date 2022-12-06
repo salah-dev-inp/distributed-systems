@@ -1,0 +1,7 @@
+set terminal png
+set output "/home/gpeyrachon/mpi/Gnuplot1.png"
+set title 'Débit en fonction de la taille'
+set xlabel ' Taille (bits) '
+set ylabel ' Débit (Gbits/s) '
+set grid
+plot "/home/gpeyrachon/mpi/data1.temp" with linespoints

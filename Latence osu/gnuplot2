@@ -1,0 +1,7 @@
+set terminal png
+set output "/home/gpeyrachon/mpi/Gnuplot2.png"
+set title ' Latence en fonction de la taille'
+set xlabel ' Taille (bits) '
+set ylabel ' Latence (us) '
+set grid
+plot "/home/gpeyrachon/mpi/data2.temp" with linespoints
