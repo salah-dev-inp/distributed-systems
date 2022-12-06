@@ -1,0 +1,90 @@
+#+OPTIONS: ':nil *:t -:t ::t <:t H:3 \n:t ^:t arch:headline
+#+OPTIONS: author:t broken-links:nil c:nil creator:nil
+#+OPTIONS: d:(not "LOGBOOK") date:t e:t email:nil f:t inline:t num:nil
+#+OPTIONS: p:nil pri:nil prop:nil stat:t tags:t tasks:t tex:t
+#+OPTIONS: timestamp:t title:t toc:t todo:t |:t
+#+TITLE: CAHIER DE LABORATOIRE
+#+DATE: <2022-09-27 mar.>
+#+AUTHOR: Guillaume Peyrachon, Damien Berno, Elsa Pedreno, Salaheddine Asloune
+#+EMAIL: 
+#+LANGUAGE: fr
+#+SELECT_TAGS: export
+#+EXCLUDE_TAGS: noexport
+#+CREATOR: Emacs 25.2.2 (Org mode 9.1.14)
+
+*** Semaine du 27/09
+- Ouverture de nos comptes grid5000
+- Construction de l'équipe
+- Choix de notre technologie pour la réalisation du projet: *MPI + C + OpenMP*
+
+*** Semaine du 03/10
+- Réalisation du parser de makefile et exécution des commandes parsées en C (non parallèle) : *Parser.c*
+
+*** Semaine du 10/10
+- Lecture des documentations et compréhension théorique des technos OpenMP et MPI pour la programmation parallèle et distribuée
+- Prise en main de Grid 5000: connexion, allocation de ressources, configuration
+
+*** Semaine du 17/10 jusqu'au 07/11
+- Utilisation et modification du ping pong osu (qui génère des benchmarks): *osu_latency.c*
+- Réalisation d'un ping pong : send/receive de manière bloquante (avec MPI): *PingPong.c*
+- Réalisation d'un programme d'échange de messages de façon asynchrone: *Latency.c*
+- Réalisation de l'éxecuteur parallèle du makefile parsé (avec un processus maître/orchestrateur et des processus esclaves): *parallel_exec.c*
+- Execution du programme parallel dans grid 5000
+
+*** Semaine du 07/11
+- Test et mesure du débit et de la latence du Ping pong
+- Construction de courbes de performances avec /gnuplot/
+
+Execution du Ping Pong (exécutable nommé /osu_latency/ ) entre 2 nodes différents: 
+#+BEGIN_SRC c
+mpirun -machinefile $OAR_NODEFILE -npernode 1 ~/mpi/osu-micro-benchmarks-5.8/mpi/pt2pt/osu_latency
+#+END_SRC
+L'option /-npernode/ permet de choisir le nombre de tâches (ou processus) exécuté par node (utile pour le ping pong entre 2 machines différentes)
+
+Le programme /osu_latency/ exécute le ping pong et stocke les données dans 2 fichiers: data1.temp (pour le début) et data2.temp (pour la latence)
+
+On a ensuite des scripts qui génèrent les courbes de performances à partir des fichiers de données générés (/gnuplot1/ et /gnuplot2/):
+#+BEGIN_SRC c
+set terminal png
+set output "/home/gpeyrachon/mpi/Gnuplot1.png"
+set title 'Débit en fonction de la taille'
+set xlabel ' Taille (bits) '
+set ylabel ' Débit (Gbits/s) '
+set grid
+plot "/home/gpeyrachon/mpi/data1.temp" with linespoints
+#+END_SRC
+
+* Gestion du code
+Pour compiler notre programme gérant l'exécution parallèle des commandes du makefile avec MPI
+#+BEGIN_SRC c
+  mpicc parallel_exec.c -o parallel_exec
+#+END_SRC
+
+** URL du gitlab de l'équipe
+https://gitlab.ensimag.fr/pedrenoe/systemes-distribues
+* Déployement dans Grid 5000
+Réservation de ressources sur grid5000 (switchs, nodes, cpu, cores)
+#+BEGIN_SRC c
+oarsub -I -l nodes=2
+#+END_SRC
+Cet example permet de réserver deux noeuds pour l’exécution ( /-l/ pour attribuer les ressources et /-I/ pour utiliser le mode interactif)
+
+#+NAME:   G5K ressources image
+[[./images/CPU.png]]
+
+Envoi des fichiers sur nos machines grid5000 dans le dossier mpi/
+#+BEGIN_SRC c
+scp parallel_exec nancy.g5k: mpi/
+#+END_SRC
+
+Execution de notre programme en parallèle sur différentes ressources de G5K:
+#+BEGIN_SRC c
+Makefile parallèle: 
+mpirun -machinefile $OAR_NODEFILE -mca mtl psm2 -mca pml ^ucx,ofi -mca btl ^ofi,openib ~/mpi/parallel_exec ~/makefiles/premier/Makefile
+#+END_SRC
+
+* Expérimentations
+makefile // simplifié \\
+time: mesure des perfs du réseau (scp) et d'exécution (mpirun)
+* Fabrication des courbes de performances
+gnuplot

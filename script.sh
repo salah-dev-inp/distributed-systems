@@ -1,0 +1,1 @@
+mpirun -machinefile $OAR_NODEFILE -mca mtl psm2 -mca pml ^ucx,ofi -mca btl ^ofi,openib ~/mpi/parallel_exec ~/Makefile

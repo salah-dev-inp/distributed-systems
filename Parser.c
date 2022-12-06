@@ -1,0 +1,252 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+/*** the structure representing a target
+*  name : name of the target
+*  level : level in dependency tree
+*  deps : prerequisites of the target
+*  num_deps : #prerequisites
+*  is_made : =1 if the target is made ie its command is executed
+*  cmd : the command of the target
+*  desc : buffer to store deps before traitement
+***/
+typedef struct target{
+  char *name;
+  int level;
+  struct target **deps;
+  size_t num_deps;
+  int is_made ;
+  char *cmd ;
+  char *desc ;
+}Target;
+
+/*** the structure representing a tree
+*  root : root target
+*  num_targets : #targets in tree
+*  num_levels : #levels in tree ie max level
+*  targets : all targets of tree
+***/
+typedef struct tree{
+  Target *root;
+  size_t num_targets;
+  size_t num_levels ;
+  Target **targets;
+}Tree;
+
+/**
+ * @brief Create a target object
+ * @return Target* 
+ */
+Target* create_target(char *name,char *cmd,char *desc){
+  Target *target = (Target*)malloc(sizeof(Target));
+  target->name=name;
+  if((cmd!=NULL) & (cmd!=" ")) target->cmd=cmd;
+  else target->cmd=NULL;
+  if((desc!=NULL) & (desc!=" ")) target->desc=desc;
+  else target->desc=NULL;
+  target->deps=NULL;
+  target->num_deps=0;
+  target->is_made=0;
+  return target;
+}
+/**
+ * @brief compare two targets based on their levels
+ * @return 1 if a's level is strictly lesser than b's level
+ */
+int compare_targets(const void *a, const void *b){
+  return (*(Target**)a)->level<(*(Target**)b)->level;
+}
+/**
+ * @brief add a target to a tree
+ */
+void add_target(Tree* tree,Target* target){
+  tree->targets = (Target**)realloc( (void*)tree->targets, sizeof(Target*)*(tree->num_targets+1) ); 
+  tree->targets[ tree->num_targets ] = target; 
+  tree->num_targets++;
+}
+/**
+ * @brief add a child to parent's prerequisites
+ */
+void add_child(Target* parent,Target* child){
+  parent->deps = (Target**)realloc( (void*)parent->deps, sizeof(Target*)*(1+parent->num_deps) ); 
+  parent->deps[ parent->num_deps ] = child; 
+  parent->num_deps++;
+}
+
+/**
+ * @brief search a target by name in a tree
+ * @return Target* if found or null otherwise
+ */
+Target* find_target(Tree *tree,char *name){
+  int i = 0;
+  Target **t = tree->targets;
+  while (i < tree->num_targets) {
+    int r = strcmp((*(t+i))->name,name);
+    if(r==0){
+      return *(t+i);
+    }
+    i++;
+  }
+  return NULL;
+}
+/**
+ * @brief routines to change shell print color
+ */
+void red () {
+  printf("\033[1;31m");
+}
+
+void green() {
+  printf("\033[1;32m");
+}
+
+void reset () {
+  printf("\033[0m");
+}
+
+/**
+ * @brief print a linear representation of a tree
+ */
+void show_linear(Tree* tree){
+  reset();
+  printf("Linear representation :\n");
+  int i = 0;
+  Target **t = tree->targets;
+  while (i < tree->num_targets) {
+    printf("target name --> %s\n",(*(t+i))->name);
+    printf("target cmd ---> %s\n",(*(t+i))->cmd);
+    printf("target deps---> %s\n",(*(t+i))->desc);
+    i++;
+  }
+}
+
+/**
+ * @brief print a tree in a a tree format
+ */
+void show_rec(Target* target,int depth,int last){
+  green();
+  printf("[%d]",target->level);
+  reset();
+  for (int j = 0; j < depth; ++j) printf ("│  ");  
+  if(last) {
+    printf("└── ");
+    green();
+    printf("%s \n",target->name);
+  }
+  else {
+    printf("├── ");
+    green();
+    printf("%s \n",target->name);
+  }
+  //red();
+  //printf("%s\n",target->cmd);
+  int i = 0;
+  Target **t = target->deps;
+  while (i < target->num_deps) {
+    if((i+1)==target->num_deps) {
+      show_rec(*(t+i),depth+1,1);
+    }
+    else show_rec(*(t+i),depth+1,0);
+    i++;
+  }
+}
+
+/**
+ * @brief this routine link targets with each other following
+ *       the parent/child mecanism
+ */
+void handle_dependencies(Tree* tree){
+  char *buffer = NULL;
+  char *name =NULL;
+  int i = 0;
+  Target **t = (Target**)malloc(tree->num_targets*sizeof(Target*));
+  t = (Target**)memcpy(t,tree->targets,tree->num_targets*sizeof(Target*));
+  Target *_t = NULL;
+  int max = tree->num_targets;
+  while (i < max) {
+    if((*(t+i))->desc){
+      buffer = strdup((*(t+i))->desc);
+      name = strtok(buffer, " ");
+      while(name!=NULL){
+        _t = find_target(tree,name);
+        if(!_t){
+          Target *__t = create_target(name,NULL,NULL);
+          add_target(tree,__t);
+          _t=__t;
+        }
+        _t->level=(*(t+i))->level+1;
+        add_child(*(t+i),_t);
+        name = strtok(NULL, " ");
+      }
+    }
+    i++;
+  }
+
+}
+/**
+ * @brief this routine executes the commands of all targets present in tree 
+ *   in descending order with respect to their level
+ *  This oredering guarentees the priority of prerequisites
+ */
+int execute(Tree* tree){
+  red();
+  printf("[EXECUTION]");
+  reset();
+  printf(" \n");
+  qsort(tree->targets, tree->num_targets ,sizeof(Target*) , compare_targets);
+  int i =0 ;
+  Target **t = tree->targets;
+  while (i < tree->num_targets) {
+    if((*(t+i))->cmd) system((*(t+i))->cmd);
+    i++;
+  }
+}
+
+int main(int argc, char **argv){
+  FILE *fp = fopen(argv[1] , "r");
+  char *line = NULL;
+  size_t len = 0;
+  ssize_t read =0;
+  int init = 1 ;
+
+  if (fp == NULL)
+      exit(EXIT_FAILURE);
+
+  char *buffer = NULL;
+  char *name = NULL;
+  char *deps = NULL;
+  char *cmd = NULL;
+  Target* target =NULL;
+  Tree *dep_Tree = (Tree*)malloc(sizeof(Tree));
+
+  while ((read = getline(&line, &len, fp)) != -1) {
+    buffer = strdup(line);
+    name = strtok(buffer," :");
+    if (name != NULL && name[0] != 10 && name[0] != 13) {
+      deps = strtok(NULL, ":\n");
+      read = getline(&line, &len, fp);
+      if (read == -1){
+        break;
+      }
+      buffer = strdup(&line[1]);
+      cmd = strtok(buffer,"\n");
+      
+      target = create_target(name,cmd,deps);
+      if(init){
+        target->level=1;
+        dep_Tree->root = target;
+        init = 0 ;
+      }
+      add_target(dep_Tree,target);
+    }
+  }
+  handle_dependencies(dep_Tree);
+  show_rec(dep_Tree->root,0,1);
+  //show_linear(dep_Tree);
+  execute(dep_Tree);
+  fclose(fp);
+  if (line)
+      free(line);
+  exit(EXIT_SUCCESS);
+}
