@@ -1,0 +1,32 @@
+dep0 : dep1 dep2 dep3 dep4 dep5 dep6 dep7 dep8 dep9 dep10 dep11 dep12 dep13 dep14 dep15
+  sleep 1 ; echo 'dep0 is executed'
+dep1 :
+  sleep 1 ; echo 'dep1 is executed'
+dep2 :
+  sleep 1 ; echo 'dep2 is executed'
+dep3 :
+  sleep 1 ; echo 'dep3 is executed'
+dep4 :
+  sleep 1 ; echo 'dep4 is executed'
+dep5 :
+  sleep 1 ; echo 'dep5 is executed'
+dep6 :
+  sleep 1 ; echo 'dep6 is executed'
+dep7 :
+  sleep 1 ; echo 'dep7 is executed'
+dep8 :
+  sleep 1 ; echo 'dep8 is executed'
+dep9 :
+  sleep 1 ; echo 'dep9 is executed'
+dep10 :
+  echo 'dep10 is executed'
+dep11 :
+  sleep 1 ; echo 'dep11 is executed'
+dep12 :
+  sleep 1 ; echo 'dep12 is executed'
+dep13 :
+  sleep 1 ; echo 'dep13 is executed'
+dep14 :
+  sleep 1 ; echo 'dep14 is executed'
+dep15 :
+  sleep 1 ; echo 'dep15 is executed'

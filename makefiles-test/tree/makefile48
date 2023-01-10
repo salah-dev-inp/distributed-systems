@@ -1,0 +1,94 @@
+dep0 : dep1 dep2 
+  sleep 1 ; echo 'dep0 is executed'
+dep1 : dep3 dep4 
+  sleep 1 ; echo 'dep1 is executed'
+dep2 : dep5 dep6 
+  sleep 1 ; echo 'dep2 is executed'
+dep3 : dep7 dep8 
+  sleep 1 ; echo 'dep3 is executed'
+dep4 : dep9 dep10 
+  sleep 1 ; echo 'dep4 is executed'
+dep5 : dep11 dep12 
+  sleep 1 ; echo 'dep5 is executed'
+dep6 : dep13 dep14 
+  sleep 1 ; echo 'dep6 is executed'
+dep7 : dep15 dep16 
+  sleep 1 ; echo 'dep7 is executed'
+dep8 : dep17 dep18 
+  sleep 1 ; echo 'dep8 is executed'
+dep9 : dep19 dep20 
+  sleep 1 ; echo 'dep9 is executed'
+dep10 : dep21 dep22 
+  sleep 1 ; echo 'dep10 is executed'
+dep11 : dep23 dep24 
+  sleep 1 ; echo 'dep11 is executed'
+dep12 : dep25 dep26 
+  sleep 1 ; echo 'dep12 is executed'
+dep13 : dep27 dep28 
+  sleep 1 ; echo 'dep13 is executed'
+dep14 : dep29 dep30 
+  sleep 1 ; echo 'dep14 is executed'
+dep15 : dep31 dep32 
+  sleep 1 ; echo 'dep15 is executed'
+dep16 : dep33 dep34 
+  sleep 1 ; echo 'dep16 is executed'
+dep17 : dep35 dep36 
+  sleep 1 ; echo 'dep17 is executed'
+dep18 : dep37 dep38 
+  sleep 1 ; echo 'dep18 is executed'
+dep19 : dep39 dep40 
+  sleep 1 ; echo 'dep19 is executed'
+dep20 : dep41 dep42 
+  sleep 1 ; echo 'dep20 is executed'
+dep21 : dep43 dep44 
+  sleep 1 ; echo 'dep21 is executed'
+dep22 : dep45 dep46 
+  sleep 1 ; echo 'dep22 is executed'
+dep23 :
+  sleep 1 ; echo 'dep23 is executed'
+dep24 :
+  sleep 1 ; echo 'dep24 is executed'
+dep25 :
+  sleep 1 ; echo 'dep25 is executed'
+dep26 :
+  sleep 1 ; echo 'dep26 is executed'
+dep27 :
+  sleep 1 ; echo 'dep27 is executed'
+dep28 :
+  sleep 1 ; echo 'dep28 is executed'
+dep29 :
+  sleep 1 ; echo 'dep29 is executed'
+dep30 :
+  sleep 1 ; echo 'dep30 is executed'
+dep31 :
+  sleep 1 ; echo 'dep31 is executed'
+dep32 :
+  sleep 1 ; echo 'dep32 is executed'
+dep33 :
+  sleep 1 ; echo 'dep33 is executed'
+dep34 :
+  sleep 1 ; echo 'dep34 is executed'
+dep35 :
+  sleep 1 ; echo 'dep35 is executed'
+dep36 :
+  sleep 1 ; echo 'dep36 is executed'
+dep37 :
+  sleep 1 ; echo 'dep37 is executed'
+dep38 :
+  sleep 1 ; echo 'dep38 is executed'
+dep39 :
+  sleep 1 ; echo 'dep39 is executed'
+dep40 :
+  sleep 1 ; echo 'dep40 is executed'
+dep41 :
+  sleep 1 ; echo 'dep41 is executed'
+dep42 :
+  sleep 1 ; echo 'dep42 is executed'
+dep43 :
+  sleep 1 ; echo 'dep43 is executed'
+dep44 :
+  sleep 1 ; echo 'dep44 is executed'
+dep45 :
+  sleep 1 ; echo 'dep45 is executed'
+dep46 :
+  sleep 1 ; echo 'dep46 is executed'

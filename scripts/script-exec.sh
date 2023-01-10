@@ -1,0 +1,1 @@
+oarsub -l core=$1 ./script.sh $2 $3

@@ -1,0 +1,1 @@
+mpirun -machinefile $OAR_NODEFILE -mca mtl psm2 -mca pml ^ucx,ofi -mca btl ^ofi,openib ~/distributed-systems/parallel_exec_log ~/distributed-systems/makefiles-test/$1 ~/distributed-systems/data/$2
