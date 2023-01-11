@@ -400,7 +400,8 @@ int main(int argc, char **argv) {
     FILE *fp = fopen(argv[2] , "a");
     if (fp == NULL)
       exit(EXIT_FAILURE);
-    fprintf(fp,"%f\n",t2 - t1);
+		printf("Execution time : %f \n",t2-t1);
+    fprintf(fp,"%s %f\n",argv[3],t2 - t1);
     fclose(fp);
   }
 	MPI_Finalize() ;

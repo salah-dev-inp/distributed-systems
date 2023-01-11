@@ -1,1 +1,1 @@
-oarsub -l core=$1 ./script.sh $2 $3
+oarsub -l core=$1 ./script-gen.sh $2 $3

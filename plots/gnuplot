@@ -1,0 +1,7 @@
+set terminal png
+set output 'image.png'
+set title '[linear] execution time  '
+set xlabel 'time (ms)'
+set ylabel 'makefile size (#targets)'
+set grid
+plot "../data/linear/record16" with linespoints
